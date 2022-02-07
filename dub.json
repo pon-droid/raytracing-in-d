@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"Tirrapon Gallaher"
+	],
+	"copyright": "Copyright © 2022, Tirrapon Gallaher",
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "pickle"
+}

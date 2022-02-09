@@ -1,64 +1,46 @@
 import std.stdio;
 import lib.v3;
+import lib.ray;
 
-/*
-struct v3 {
-	double[3] arr;
 
-	this(double x, double y, double z){
-		this.arr[0] = x;
-		this.arr[1] = y;
-		this.arr[2] = z;
-	}
-
-	v3 opBinary(string op : "+")(const ref v3 v) {
-		return v3(arr[0] + v.arr[0], arr[1] + v.arr[1], arr[2] + v.arr[2]);
-	}
-
-	v3 opBinary(string op : "-")(const ref v3 v) {
-		return v3(arr[0] - v.arr[0], arr[1] - v.arr[1], arr[2] - v.arr[2]);
-	}
-
-	v3 opBinary(string op : "*")(const ref v3 v){
-		return v3(arr[0] * v.arr[0], arr[1] * v.arr[1], arr[2] * v.arr[2]);
-	}
-
-	v3 opBinary(string op : "*")(double t){
-		return v3(t*arr[0], t*arr[1], t*arr[2]);
-	}
-
-	v3 opBinaryRight(string op : "*")(double t){
-		return v3(t*arr[0], t*arr[1], t*arr[2]);
-	}
+v3 ray_colour(in ray r){
+	v3 unit_dir = unit_vector(r.dir);
+	auto t = .5*(unit_dir.a[1] + 1.);
+	return (1.0-t)*colour(1.0,1.0,1.0) + t*colour(0.5,0.7,1.0);
 }
-*/
 
 
 void main()
 {
-   const int iw = 256;
-   const int ih = 256;
+   const auto aspect = 16.0 / 9.0;
+   const int iw = 400;
+   const int ih = cast(int)(iw / aspect);
 
-   v3 temp = v3(3,3,3);
+   auto viewport_h = 2.0;
+   auto viewport_w = aspect * viewport_h;
+   auto focal_length = 1.0;
 
-   unit_vector(temp);
+   auto origin = v3(0,0,0);
+   auto horz = v3(viewport_w,0,0);
+   auto vert = v3(0,viewport_h,0);
+   auto low_left_corn = origin - horz/2 - vert/2 - v3(0,0,focal_length);
 
    write("P3\n",iw," ",ih,"\n255\n");
 
+
    for(int y = ih-1; y >= 0; y--){
    	for(int x = iw-1; x >= 0; x--){
-   		auto r = cast(double)(y) / (ih-1);
-   		auto g = cast(double)(x) / (iw-1);
-   		auto b = cast(double)(.25);
 
-   		int ir = cast(int)(r * 255.999);
-   		int ig = cast(int)(g * 255.999);
-   		int ib = cast(int)(b * 255.999);
+   	    auto u = cast(double)(x) / (iw-1);
+   	    auto v = cast(double)(y) / (ih-1);
+   	    
+        ray r = ray(origin,low_left_corn + u*horz + v*vert - origin);
 
-   		write(ir," ",ig," ",ib,"\n");
+        
+   		colour rgb = ray_colour(r);
+
+   		ppm(rgb);
    		
    	}
    }
-
-   writeln(unit_vector(temp));
 }

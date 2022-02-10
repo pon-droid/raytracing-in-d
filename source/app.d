@@ -3,11 +3,31 @@ import lib.v3;
 import lib.ray;
 
 
+
+
+bool hit_sphere(in v3 centre, in double radius, in ray r){
+   //https://www.lighthouse3d.com/tutorials/maths/ray-sphere-intersection/
+   // pc is the distance between the ray start and the centre of a possible sphere
+	v3 pc = r.orig - centre;
+	
+	auto a = dot(r.dir,r.dir);
+	auto b = 2.0 * dot(pc,r.dir);
+	auto c = dot(pc,pc) - radius*radius;
+	auto discriminant = b*b - 4*a*c;
+	
+	return discriminant > 0;
+}
+
+
 v3 ray_colour(in ray r){
+    if(hit_sphere(v3(0,0,-1),.5,r)) { return colour(1,0,0); }
+    
 	v3 unit_dir = unit_vector(r.dir);
 	auto t = .5*(unit_dir.a[1] + 1.);
 	return (1.0-t)*colour(1.0,1.0,1.0) + t*colour(0.5,0.7,1.0);
 }
+
+
 
 
 void main()
@@ -43,4 +63,7 @@ void main()
    		
    	}
    }
+
+   //writeln(low_left_corn);
+   //writeln(horz);
 }
